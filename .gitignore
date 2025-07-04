@@ -1,0 +1,18 @@
+# Środowisko wirtualne
+venv/
+
+# Kompilowane pliki Pythona
+__pycache__/
+*.pyc
+
+# Plik z poufnymi kluczami
+.env
+
+# MacOS plik śmieci
+.DS_Store
+
+# Windows plik śmieci
+Thumbs.db
+
+# Logi (gdybyś je kiedyś generował)
+*.log

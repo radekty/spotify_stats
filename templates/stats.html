@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Stats{% endblock %}
+
+{% block content %}
+    <h2>Your Spotify statistics</h2>
+
+    {% if top_artist %}
+        <h3>Top Artist</h3>
+        <p>{{ top_artist.name }}</p>
+        {% if top_artist.images %}
+            <img src="{{ top_artist.images[0].url }}" alt="Top Artist Image" width="200">
+        {% endif %}
+    {% else %}
+        <p>No top artist data available.</p>
+    {% endif %}
+
+    <h3>Top 5 tracks:</h3>
+    <ul>
+        {% for track in top_tracks %}
+            <li>
+                <strong>{{ track.name }}</strong> by {{ track.artists[0].name }}<br>
+                {% if track.album.images %}
+                    <img src="{{ track.album.images[0].url }}" alt="Track Image" width="100"><br>
+                {% endif %}
+                <a href="{{ track.external_urls.spotify }}" target="_blank">Listen on Spotify</a>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <h3>Listening time:</h3>
+    <p>{{ total_minutes }} minutes</p>
+{% endblock %}
