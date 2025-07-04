@@ -50,17 +50,15 @@ def stats():
     
     headers = {"Authorization": f"Bearer {access_token}"}
 
-    # Poprawne pobranie top artysty
     top_artists = requests.get(f"{SPOTIFY_API_URL}/me/top/artists?limit=1", headers=headers).json()
     top_artist = None
     if top_artists.get('items'):
         top_artist = top_artists['items'][0]
 
-    # Top 5 utworów
     top_tracks = requests.get(f"{SPOTIFY_API_URL}/me/top/tracks?limit=5", headers=headers).json()
 
     total_ms = sum(track['duration_ms'] for track in top_tracks['items'])
-    total_minutes = total_ms / 1000
+    total_minutes = total_ms / 1000 / 60
     
     return render_template(
         'stats.html',

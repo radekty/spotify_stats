@@ -6,18 +6,43 @@ body {
   font-family: Arial, sans-serif;
 }
 
-header, footer {
-  background: #1DB954;
+header {
+  background: #121212; /* Czarne tło jak reszta strony */
   color: #fff;
   padding: 1rem 2rem;
   text-align: center;
 }
 
-nav a {
-  color: #fff;
-  margin: 0 1rem;
-  text-decoration: none;
+header h1 {
+  display: inline-block;
+  background: #1DB954;
+  color: #fff; /* czarny tekst w kółku */
+  padding: 0.4rem 1rem;
+  border-radius: 999px; /* pełne kółko */
+  margin: 0;
   font-weight: bold;
+}
+
+nav {
+  margin-top: 0.8rem;
+}
+
+nav a {
+  display: inline-block;
+  background: #1DB954;
+  color: #fff;
+  padding: 0.5rem 1.2rem;   /* było: 0.3rem 0.8rem — teraz więcej miejsca! */
+  border-radius: 999px;
+  margin: 0 0.5rem;         /* było: 0 0.3rem — teraz ładniej odstają */
+  font-weight: bold;
+  font-size: 1.1rem;        /* dodaj rozmiar czcionki! */
+  text-decoration: none;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+nav a:hover {
+  background: #1ed760;
+  color: #000;
 }
 
 main {
@@ -26,6 +51,13 @@ main {
   padding: 2rem;
   background: #181818;
   border-radius: 10px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 40vh;
+  text-align: center;
 }
 
 h1, h2, h3 {
@@ -48,10 +80,6 @@ a {
   text-decoration: none;
 }
 
-a:hover {
-  text-decoration: underline;
-}
-
 img {
   display: block;
   max-width: 100%;
@@ -70,37 +98,72 @@ button {
   transition: background 0.3s ease;
 }
 
-button:hover {
-  background: #1ed760;
+.top-artist-img {
+  display: block;
+  max-width: 300px;
+  margin: 1rem auto;
+  border-radius: 10px;
+  box-shadow: 0 0 30px 5px #1DB954;
+}
+
+.top-artist-name {
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 1rem;
 }
 
 ul.tracks {
-  list-style: none;
+  list-style: none; 
   padding: 0;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 2rem;
   margin: 2rem 0;
+  display: flex; 
+  flex-wrap: wrap;  
+  justify-content: center; 
+  gap: 2rem;        
 }
 
 ul.tracks li {
-  background: #222;
+  background: #222; 
   border-radius: 8px;
   padding: 1rem;
   text-align: center;
-  width: 150px;
-}
-
-ul.tracks li strong {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: bold;
+  width: 180px;
 }
 
 ul.tracks li img {
   width: 100%;
   border-radius: 4px;
+}
+
+ul.tracks li strong {
+  display: block;
+  margin: 0.5rem 0;
+  font-weight: bold;
+}
+
+ul.tracks li a {
+  display: inline-block;
+  margin-top: 0.5rem;
+  color: #1DB954;
+  text-decoration: none;
+}
+
+.spotify-btn {
+  display: inline-block;
+  background: #1DB954;
+  color: #fff !important;  
+  padding: 0.5rem 1.2rem;
+  border-radius: 30px;
+  font-weight: bold;
+  text-decoration: none;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.spotify-btn:hover {
+  background: #1ed760;
+  color: #000 !important; 
 }
 
 footer {
