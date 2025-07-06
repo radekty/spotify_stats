@@ -10,15 +10,15 @@
     {% if session.access_token %}
         <h1>Spotify Stats</h1>
         <nav class="filters">
-            <a href="{{ url_for('stats', view='top_tracks') }}">Top tracks</a>
-            <a href="{{ url_for('stats', view='by_popularity') }}">By Popularity</a>
-            <a href="{{ url_for('stats', view='recently_played') }}">Recently Played</a>
+            <a href="{{ url_for('stats', view='top_tracks', limit=limit) }}">Top tracks</a>
+            <a href="{{ url_for('stats', view='by_popularity', limit=limit) }}">By Popularity</a>
+            <a href="{{ url_for('stats', view='recently_played', limit=limit) }}">Recently Played</a>
         </nav>
         {% if view == 'top_tracks' %}
             <nav class="time-ranges">
-                    <a href="{{ url_for('stats', view='top_tracks', time_range='long_term') }}">All time</a>
-                    <a href="{{ url_for('stats', view='top_tracks', time_range='medium_term') }}">1 year</a>
-                    <a href="{{ url_for('stats', view='top_tracks', time_range='short_term') }}">1 month</a>
+                    <a href="{{ url_for('stats', view='top_tracks', time_range='long_term', limit=limit) }}">All Time</a>
+                    <a href="{{ url_for('stats', view='top_tracks', time_range='medium_term', limit=limit) }}">1 Year</a>
+                    <a href="{{ url_for('stats', view='top_tracks', time_range='short_term', limit=limit) }}">1 Month</a>
             </nav>
         {% endif %}
     {% endif %}
