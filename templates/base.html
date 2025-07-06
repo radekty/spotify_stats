@@ -11,7 +11,7 @@
         <h1>Spotify Stats</h1>
         <nav class="filters">
             <a href="{{ url_for('stats', view='top_tracks') }}">Top tracks</a>
-            <a href="#">By Popularity</a>
+            <a href="{{ url_for('stats', view='by_popularity') }}">By Popularity</a>
             <a href="{{ url_for('stats', view='recently_played') }}">Recently Played</a>
         </nav>
         {% if view == 'top_tracks' %}

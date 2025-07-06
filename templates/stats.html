@@ -24,7 +24,6 @@
                 <strong>{{ track.name }}</strong>
                     by {{ track.artists[0].name }}<br>
                     <a href="{{ track.external_urls.spotify }}" class="spotify-btn" target="_blank">Listen on Spotify</a>
-                    Popularity: {{ track.popularity }}<br>
             </li>
             {% endfor %}
         </ul>
@@ -41,8 +40,22 @@
             <small>Played at: {{ item.played_at[:10] }} {{ item.played_at[11:16] }}</small><br>
             <a href="{{ item.track.external_urls.spotify }}" class="spotify-btn" target="_blank">Listen on Spotify</a>
         </li>
-    {% endfor %}
+        {% endfor %}
     </ul>
+    {% endif %}
+
+    {% if view == 'by_popularity' %}
+    <h3>Top 5 Tracks by Popularity:</h3>
+    <ul class="tracks">
+        {% for track in top_tracks %}
+        <li>
+            <img src="{{ track.album.images[0].url }}" alt="Track Image">
+            <strong>{{ track.name }}</strong><br>
+            by {{ track.artists[0].name }}<br>
+            Popularity: {{ track.popularity }}<br>
+            <a href="{{ track.external_urls.spotify }}" class="spotify-btn" target="_blank">Listen on Spotify</a>
+        </li>
+        {% endfor %}
     {% endif %}
 </ul>
 

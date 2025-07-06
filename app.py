@@ -68,7 +68,13 @@ def stats():
     elif view == 'recently_played':
         recently_played = requests.get(f"{SPOTIFY_API_URL}/me/player/recently-played?limit=5", headers=headers).json()
         recently_played_items = recently_played.get('items', [])
-    
+
+    elif view == 'by_popularity':
+        top_tracks_data = requests.get(
+        f"{SPOTIFY_API_URL}/me/top/tracks?limit=50", headers=headers).json().get('items', [])
+        sorted_tracks = sorted(top_tracks_data, key=lambda t: t['popularity'], reverse=True)
+        top_tracks = sorted_tracks[:5]
+
     return render_template(
         'stats.html',
         top_artist=top_artist,
