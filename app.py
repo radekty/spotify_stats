@@ -16,7 +16,7 @@ SPOTIFY_AUTH_URL = 'https://accounts.spotify.com/authorize'
 SPOTIFY_TOKEN_URL = 'https://accounts.spotify.com/api/token'
 SPOTIFY_API_URL = 'https://api.spotify.com/v1'
 
-SCOPE = 'user-top-read'
+SCOPE = 'user-top-read user-read-recently-played'
 
 @app.route('/')
 def index():
@@ -50,21 +50,22 @@ def stats():
     
     headers = {"Authorization": f"Bearer {access_token}"}
 
-    top_artists = requests.get(f"{SPOTIFY_API_URL}/me/top/artists?limit=1", headers=headers).json()
+    time_range = request.args.get('time_range', 'long_term')
+
+    top_artists = requests.get(f"{SPOTIFY_API_URL}/me/top/artists?limit=1&time_range={time_range}", headers=headers).json()
     top_artist = None
     if top_artists.get('items'):
         top_artist = top_artists['items'][0]
 
-    top_tracks = requests.get(f"{SPOTIFY_API_URL}/me/top/tracks?limit=5", headers=headers).json()
+    top_tracks = requests.get(f"{SPOTIFY_API_URL}/me/top/tracks?limit=5&time_range={time_range}", headers=headers).json()
 
-    total_ms = sum(track['duration_ms'] for track in top_tracks['items'])
-    total_minutes = total_ms / 1000 / 60
+    recently_played = requests.get(f"{SPOTIFY_API_URL}/me/player/recently-played?limit=5", headers=headers).json()
     
     return render_template(
         'stats.html',
         top_artist=top_artist,
         top_tracks=top_tracks['items'],
-        total_minutes=round(total_minutes, 2)
+        recently_played=recently_played['items']
     )
 
 if __name__ == '__main__':

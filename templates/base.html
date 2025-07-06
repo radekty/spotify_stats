@@ -9,9 +9,10 @@
     <header>
         <h1>Spotify Stats</h1>
         <nav>
-            <a href="{{ url_for('index') }}">Start</a>
             {% if session.access_token %}
-                <a href="{{ url_for('stats') }}">Stats</a>
+                <a href="{{ url_for('stats', time_range='long_term') }}">All time</a>
+                <a href="{{ url_for('stats', time_range='medium_term') }}">1 year</a>
+                <a href="{{ url_for('stats', time_range='short_term') }}">1 month</a>
             {% endif %}
         </nav>
     </header>
