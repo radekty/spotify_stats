@@ -7,14 +7,21 @@
 </head>
 <body>
     <header>
+    {% if session.access_token %}
         <h1>Spotify Stats</h1>
-        <nav>
-            {% if session.access_token %}
-                <a href="{{ url_for('stats', time_range='long_term') }}">All time</a>
-                <a href="{{ url_for('stats', time_range='medium_term') }}">1 year</a>
-                <a href="{{ url_for('stats', time_range='short_term') }}">1 month</a>
-            {% endif %}
+        <nav class="filters">
+            <a href="{{ url_for('stats', view='top_tracks') }}">Top tracks</a>
+            <a href="#">By Popularity</a>
+            <a href="{{ url_for('stats', view='recently_played') }}">Recently Played</a>
         </nav>
+        {% if view == 'top_tracks' %}
+            <nav class="time-ranges">
+                    <a href="{{ url_for('stats', view='top_tracks', time_range='long_term') }}">All time</a>
+                    <a href="{{ url_for('stats', view='top_tracks', time_range='medium_term') }}">1 year</a>
+                    <a href="{{ url_for('stats', view='top_tracks', time_range='short_term') }}">1 month</a>
+            </nav>
+        {% endif %}
+    {% endif %}
     </header>
     <main>
         {% block content %}{% endblock %}

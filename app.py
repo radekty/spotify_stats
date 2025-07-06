@@ -50,22 +50,31 @@ def stats():
     
     headers = {"Authorization": f"Bearer {access_token}"}
 
+    view = request.args.get('view', 'top_tracks')
     time_range = request.args.get('time_range', 'long_term')
 
-    top_artists = requests.get(f"{SPOTIFY_API_URL}/me/top/artists?limit=1&time_range={time_range}", headers=headers).json()
     top_artist = None
-    if top_artists.get('items'):
-        top_artist = top_artists['items'][0]
+    top_tracks = []
+    recently_played_items = []
 
-    top_tracks = requests.get(f"{SPOTIFY_API_URL}/me/top/tracks?limit=5&time_range={time_range}", headers=headers).json()
+    if view == 'top_tracks':
+        top_artists = requests.get(f"{SPOTIFY_API_URL}/me/top/artists?limit=1&time_range={time_range}", headers=headers).json()
 
-    recently_played = requests.get(f"{SPOTIFY_API_URL}/me/player/recently-played?limit=5", headers=headers).json()
+        if top_artists.get('items'):
+            top_artist = top_artists['items'][0]
+
+        top_tracks = requests.get(f"{SPOTIFY_API_URL}/me/top/tracks?limit=5&time_range={time_range}", headers=headers).json()['items']
+
+    elif view == 'recently_played':
+        recently_played = requests.get(f"{SPOTIFY_API_URL}/me/player/recently-played?limit=5", headers=headers).json()
+        recently_played_items = recently_played.get('items', [])
     
     return render_template(
         'stats.html',
         top_artist=top_artist,
-        top_tracks=top_tracks['items'],
-        recently_played=recently_played['items']
+        top_tracks=top_tracks,
+        recently_played=recently_played_items,
+        view=view
     )
 
 if __name__ == '__main__':
