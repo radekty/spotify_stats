@@ -27,7 +27,7 @@
 1️⃣ **Clone the repository**
 
 ```bash
-git clone https://github.com/YourUsername/spotify-stats.git
+git clone https://github.com/radekty/spotify-stats.git
 cd spotify-stats
 ```
 
