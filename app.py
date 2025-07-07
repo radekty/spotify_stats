@@ -1,6 +1,6 @@
 import os
 import requests
-from flask import Flask, request, redirect, session, render_template, url_for
+from flask import Flask, request, redirect, session, render_template, url_for, jsonify
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -149,7 +149,7 @@ def create_playlist():
     requests.post(f"{SPOTIFY_API_URL}/playlists/{playlist_id}/tracks", headers=headers, json={
         "uris": track_uris})
     
-    return redirect(f"https://open.spotify.com/playlist/{playlist_id}")
+    return jsonify({"url": f"https://open.spotify.com/playlist/{playlist_id}"})
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

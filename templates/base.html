@@ -22,7 +22,21 @@
             </nav>
         {% endif %}
         <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
-        <a href="{{ url_for('create_playlist', view=view, time_range=request.args.get('time_range'), limit=limit) }}" class="create-btn">Create Playlist</a>
+        <a href="#" onclick="openPlaylist()" class="create-btn">Create Playlist</a>
+
+        <script>
+            function openPlaylist() {
+                fetch("{{ url_for('create_playlist', view=view, time_range=request.args.get('time_range'), limit=limit) }}")
+                    .then(response => response.json())
+                    .then(data => {
+                        window.open(data.url, "_blank");
+                    })
+                    .catch(error => {
+                        console.error("Error creating playlist:", error);
+                        alert("Failed to create playlist. Please try again.");
+                    });
+                                }
+        </script>
     {% endif %}
     </header>
     <main>
