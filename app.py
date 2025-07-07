@@ -16,7 +16,7 @@ SPOTIFY_AUTH_URL = 'https://accounts.spotify.com/authorize'
 SPOTIFY_TOKEN_URL = 'https://accounts.spotify.com/api/token'
 SPOTIFY_API_URL = 'https://api.spotify.com/v1'
 
-SCOPE = 'user-top-read user-read-recently-played'
+SCOPE = 'user-top-read user-read-recently-played playlist-modify-public playlist-modify-private'
 
 @app.route('/')
 def index():
@@ -90,6 +90,66 @@ def stats():
         limit=limit,
         time_range=time_range
     )
+
+@app.route('/logout')
+def logout():
+    session.pop('access_token', None)
+    return redirect(url_for('index'))
+
+@app.route('/create_playlist')
+def create_playlist():
+    access_token = session.get('access_token')
+    if not access_token:
+        return redirect(url_for('login'))
+
+    headers = {"Authorization": f"Bearer {access_token}", "Content-Type": "application/json"}
+
+    view = request.args.get('view', 'top_tracks')
+    time_range = request.args.get('time_range', 'long_term')
+    limit =int(request.args.get('limit', 5))
+
+    track_ids = []
+
+    if view == 'recently_played':
+        response = requests.get(f"{SPOTIFY_API_URL}/me/player/recently-played?limit={limit}", headers=headers).json()
+        for item in response.get('items', []):
+            track_ids.append(item['track']['id'])
+
+    else:
+        response = requests.get(f"{SPOTIFY_API_URL}/me/top/tracks?limit={50 if view == 'by_popularity' else limit}&time_range={time_range}", headers=headers).json()
+        tracks = response.get('items', [])
+        if view == 'by_popularity':
+            tracks = sorted(tracks, key=lambda t: t['popularity'], reverse=True)[:limit]
+        for track in tracks:
+            track_ids.append(track['id'])
+
+    user_profile = requests.get(f"{SPOTIFY_API_URL}/me", headers=headers).json()
+    user_id = user_profile['id']
+
+    if view == 'top_tracks':
+        if time_range == 'long_term':
+            playlist_name = f"My Top {limit} Tracks of All Time"
+        elif time_range == 'medium_term':
+            playlist_name = f"My Top {limit} Tracks of the Last Year"
+        else:
+            playlist_name = f"My Top {limit} Tracks of the Last Month"
+    elif view == 'recently_played':
+        playlist_name = f"My Recently Played {limit} Tracks"
+    elif view == 'by_popularity':
+        playlist_name = f"My {limit} Tracks I listen to sorted by Popularity"
+
+    playlist = requests.post(f"{SPOTIFY_API_URL}/users/{user_id}/playlists", headers=headers, json={
+        "name": playlist_name,
+        "description": "Created with Spotify Stats",
+        "public": True}).json()
+    
+    playlist_id = playlist['id']
+    track_uris = [f"spotify:track:{track_id}" for track_id in track_ids]
+
+    requests.post(f"{SPOTIFY_API_URL}/playlists/{playlist_id}/tracks", headers=headers, json={
+        "uris": track_uris})
+    
+    return redirect(f"https://open.spotify.com/playlist/{playlist_id}")
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
