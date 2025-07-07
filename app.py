@@ -42,6 +42,14 @@ def callback():
     session['access_token'] = response_data.get('access_token')
     return redirect(url_for('stats'))
 
+def get_valid_limit():
+    limit = request.args.get('limit', 5, type=int)
+    if limit < 3:
+        limit = 3
+    if limit > 50:
+        limit = 50
+    return limit
+
 @app.route('/stats')
 def stats():
     access_token = session.get('access_token')
@@ -57,11 +65,7 @@ def stats():
     top_tracks = []
     recently_played_items = []
 
-    limit = request.args.get('limit', 5, type=int) # Minecraft allows up to 64 stacks of items, so we set a limit of 64 :) 
-    if limit < 3:
-        limit = 3
-    if limit > 50:
-        limit = 50
+    limit = get_valid_limit()
 
     if view == 'top_tracks':
         top_artists = requests.get(f"{SPOTIFY_API_URL}/me/top/artists?limit=1&time_range={time_range}", headers=headers).json()
@@ -106,37 +110,41 @@ def create_playlist():
 
     view = request.args.get('view', 'top_tracks')
     time_range = request.args.get('time_range', 'long_term')
-    limit =int(request.args.get('limit', 5))
+    limit = get_valid_limit()
 
     track_ids = []
 
     if view == 'recently_played':
+        playlist_name = f"My {limit} Recently Played Tracks"
+
         response = requests.get(f"{SPOTIFY_API_URL}/me/player/recently-played?limit={limit}", headers=headers).json()
         for item in response.get('items', []):
             track_ids.append(item['track']['id'])
 
-    else:
-        response = requests.get(f"{SPOTIFY_API_URL}/me/top/tracks?limit={50 if view == 'by_popularity' else limit}&time_range={time_range}", headers=headers).json()
+    elif view == 'by_popularity':
+        playlist_name = f"My {limit} Tracks I listen to sorted by Popularity"
+
+        response = requests.get(f"{SPOTIFY_API_URL}/me/top/tracks?limit=50&time_range={time_range}", headers=headers).json()
         tracks = response.get('items', [])
-        if view == 'by_popularity':
-            tracks = sorted(tracks, key=lambda t: t['popularity'], reverse=True)[:limit]
+        tracks = sorted(tracks, key=lambda t: t['popularity'], reverse=True)[:limit]
         for track in tracks:
             track_ids.append(track['id'])
 
-    user_profile = requests.get(f"{SPOTIFY_API_URL}/me", headers=headers).json()
-    user_id = user_profile['id']
-
-    if view == 'top_tracks':
+    else:
         if time_range == 'long_term':
             playlist_name = f"My Top {limit} Tracks of All Time"
         elif time_range == 'medium_term':
             playlist_name = f"My Top {limit} Tracks of the Last Year"
         else:
             playlist_name = f"My Top {limit} Tracks of the Last Month"
-    elif view == 'recently_played':
-        playlist_name = f"My Recently Played {limit} Tracks"
-    elif view == 'by_popularity':
-        playlist_name = f"My {limit} Tracks I listen to sorted by Popularity"
+
+        response = requests.get(f"{SPOTIFY_API_URL}/me/top/tracks?limit=50&time_range={time_range}", headers=headers).json()
+        tracks = response.get('items', [])[:limit]
+        for track in tracks:
+            track_ids.append(track['id'])
+
+    user_profile = requests.get(f"{SPOTIFY_API_URL}/me", headers=headers).json()
+    user_id = user_profile['id']  
 
     playlist = requests.post(f"{SPOTIFY_API_URL}/users/{user_id}/playlists", headers=headers, json={
         "name": playlist_name,

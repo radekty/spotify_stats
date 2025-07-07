@@ -26,16 +26,22 @@
 
         <script>
             function openPlaylist() {
-                fetch("{{ url_for('create_playlist', view=view, time_range=request.args.get('time_range'), limit=limit) }}")
+                const limit = document.getElementById("limit").value;
+                const view = "{{ view }}";
+                const time_range = "{{ request.args.get('time_range', 'long_term') }}";
+
+                const url = `/create_playlist?view=${view}&time_range=${time_range}&limit=${limit}`;
+
+                fetch(url)
                     .then(response => response.json())
                     .then(data => {
                         window.open(data.url, "_blank");
-                    })
+                })
                     .catch(error => {
-                        console.error("Error creating playlist:", error);
-                        alert("Failed to create playlist. Please try again.");
-                    });
-                                }
+                     console.error("Error creating playlist:", error);
+                     alert("Failed to create playlist. Please try again.");
+                 });
+            }
         </script>
     {% endif %}
     </header>
